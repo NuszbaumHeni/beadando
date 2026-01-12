@@ -106,13 +106,15 @@ public partial class MainViewModel : ViewModelBase
             EditPackageCommand = new RelayCommand<Package>(EditPackage)
         };
         Packages.Add(package);
+        Model.Addpackage(package);
     }
 
     private void SaveEdit()
     {
+        Package vmi = new Package();
         if (SelectedPackage != null)
         {
-            SelectedPackage.Id = int.Parse(NewId);
+            vmi.Id = SelectedPackage.Id;
             SelectedPackage.Name = NewName;
             SelectedPackage.SentDate = NewSentDate;
             SelectedPackage.FromCity = NewFromCity;
@@ -131,6 +133,7 @@ public partial class MainViewModel : ViewModelBase
     public void EditPackage(Package package)
     {
         SelectedPackage = package;
+        Package vmi = new Package();
         if (SelectedPackage != null)
         {
             NewId = SelectedPackage.Id.ToString();
