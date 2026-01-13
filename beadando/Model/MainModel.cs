@@ -20,14 +20,24 @@ namespace beadando.Model
             Packages.Add(packages);
         }
 
-        public void SaveEdit(Package selectedPackage, Package editedPackage)
+        public void SaveEdit(int selectedPackageId, Package editedPackage)
         {
-            var index = Packages.IndexOf(selectedPackage);
-            if (index != -1)
+            foreach (Package p in Packages)
             {
-                Packages[index] = editedPackage;
+                if (p.Id == selectedPackageId)
+                {
+                    p.Name = editedPackage.Name;
+                    p.SentDate = editedPackage.SentDate.Date;
+                    p.FromCity = editedPackage.FromCity;
+                    p.ToCity = editedPackage.ToCity;
+                    p.Status = editedPackage.Status;
+                    p.Price = editedPackage.Price;
+                    p.DaysRemaining = editedPackage.DaysRemaining;
+                }
             }
         }
+
+        
     }
 
 }

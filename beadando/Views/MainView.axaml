@@ -13,17 +13,10 @@
 			<ColumnDefinition Width="2*"/>
 		</Grid.ColumnDefinitions>
 
-		<Menu>
-			<MenuItem Header="_Fájl">
-				<MenuItem Header="Mentés" Command="{Binding SaveToFileCommand}" />
-				<MenuItem Header="Betöltés" Command="{Binding LoadFromFileCommand}" />
-			</MenuItem>
-		</Menu>
-
 		<StackPanel Grid.Column="0" Margin="5">
 			<TextBlock Text="Új csomag felvétele" FontWeight="Bold"/>
 			<TextBlock Text="Azonosító"/>
-			<TextBox Text="{Binding NewId}"/>
+			<TextBlock Text="{Binding NewId}"/>
 			<TextBlock Text="Név"/>
 			<TextBox Text="{Binding NewName}"/>
 			<TextBlock Text="Feladás dátuma"/>
@@ -33,7 +26,7 @@
 			<TextBlock Text="Hova (város)"/>
 			<TextBox Text="{Binding NewToCity}"/>
 			<TextBlock Text="Állapot"/>
-			<ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding SelectedPackage.Status}"/>
+			<ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding NewStatus}"/>
 			<TextBlock Text="Ár"/>
 			<TextBox Text="{Binding NewPrice}"/>
 			<TextBlock Text="Hátralévõ napok"/>
@@ -61,7 +54,7 @@
 		<StackPanel Grid.Column="2" Margin="5">
 			<TextBlock Text="Kiválasztott csomag" FontWeight="Bold"/>
 			<TextBlock Text="Azonosító"/>
-			<TextBox Text="{Binding SelectedPackage.Id}" IsReadOnly="True"/>
+			<TextBlock Text="{Binding SelectedPackage.Id}"/>
 			<TextBlock Text="Név"/>
 			<TextBox Text="{Binding SelectedPackage.Name}"/>
 			<TextBlock Text="Feladás dátuma"/>

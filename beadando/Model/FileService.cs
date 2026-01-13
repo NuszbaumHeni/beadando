@@ -24,7 +24,6 @@ namespace beadando.Model
                         string[] parts = line.Split(';');
                         Package p = new Package
                         {
-                            Id = int.Parse(parts[0]),
                             Name = parts[1],
                             SentDate = DateTime.Parse(parts[2]),
                             FromCity = parts[3],

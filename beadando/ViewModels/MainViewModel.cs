@@ -14,6 +14,7 @@ public partial class MainViewModel : ViewModelBase
     public Package Package;
     public FileService FileService;
     public ObservableCollection<Package> Packages { get; set; }
+    private Package editPackage;
 
     private Package? _selectedPackage;
     public Package? SelectedPackage
@@ -33,7 +34,11 @@ public partial class MainViewModel : ViewModelBase
     public DateTime NewSentDate { get; set; }
     public string NewFromCity { get; set; }
     public string NewToCity { get; set; }
-    public Status NewStatus { get; set; }
+
+    private Status newstatus;
+    public Status NewStatus { get { return newstatus; } 
+        set { newstatus = value; } }
+
     public string NewPrice { get; set; }
     public string NewDaysRemaining { get; set; }
     public string ErrorMessage { get; set; }
@@ -70,17 +75,16 @@ public partial class MainViewModel : ViewModelBase
     }
     private void AddPackage()
     {
-        if (string.IsNullOrWhiteSpace(NewId) ||
-            string.IsNullOrWhiteSpace(NewName) ||
+        if (string.IsNullOrWhiteSpace(NewName) ||
             string.IsNullOrWhiteSpace(NewFromCity) ||
             string.IsNullOrWhiteSpace(NewToCity))
         {
             ShowError("Minden mezőt ki kell tölteni!");
             return;
         }
-        if (int.Parse(NewPrice) <= 0)
+        if (int.Parse(NewPrice) < 0)
         {
-            ShowError("Az ár nem lehet 0 vagy negatív.");
+            ShowError("Az ár nem lehet negatív.");
             return;
         }
         if (int.Parse(NewDaysRemaining) < 0)
@@ -91,13 +95,13 @@ public partial class MainViewModel : ViewModelBase
         if (NewStatus == Status.Delivered || NewStatus == Status.Canceled)
         {
             NewDaysRemaining = "0";
+            OnPropertyChanged(nameof(NewDaysRemaining));
         }
 
         var package = new Package
         {
-            Id = int.Parse(NewId),
             Name = NewName,
-            SentDate = NewSentDate,
+            SentDate = NewSentDate.Date,
             FromCity = NewFromCity,
             ToCity = NewToCity,
             Status = NewStatus,
@@ -107,21 +111,53 @@ public partial class MainViewModel : ViewModelBase
         };
         Packages.Add(package);
         Model.Addpackage(package);
+        NewName = string.Empty;
+        NewFromCity = string.Empty;
+        NewToCity = string.Empty;
+        NewPrice = string.Empty;
+        NewDaysRemaining = string.Empty;
+        NewStatus = Status.InTransit;
+        OnPropertyChanged(nameof(NewName));
+        OnPropertyChanged(nameof(NewFromCity));
+        OnPropertyChanged(nameof(NewToCity));
+        OnPropertyChanged(nameof(NewPrice));
+        OnPropertyChanged(nameof(NewDaysRemaining));
+        OnPropertyChanged(nameof(NewStatus));
     }
 
     private void SaveEdit()
     {
-        Package vmi = new Package();
         if (SelectedPackage != null)
         {
-            vmi.Id = SelectedPackage.Id;
-            SelectedPackage.Name = NewName;
-            SelectedPackage.SentDate = NewSentDate;
-            SelectedPackage.FromCity = NewFromCity;
-            SelectedPackage.ToCity = NewToCity;
-            SelectedPackage.Status = NewStatus;
-            SelectedPackage.Price = int.Parse(NewPrice);
-            SelectedPackage.DaysRemaining = int.Parse(NewDaysRemaining);
+            if (SelectedPackage.Price < 0)
+            {
+                ShowError("Az ár nem lehet negatív.");
+                return;
+            }
+            if (SelectedPackage.DaysRemaining < 0)
+            {
+                ShowError("A hátralévő napok nem lehetnek negatívak.");
+                return;
+            }
+            if (SelectedPackage.Status == Status.Delivered || SelectedPackage.Status == Status.Canceled)
+            {
+                SelectedPackage.DaysRemaining = 0;
+                OnPropertyChanged(nameof(SelectedPackage.DaysRemaining));
+            }
+            foreach (Package p in Packages)
+            {
+                if(p.Id == SelectedPackage.Id)
+                {
+                    p.Name = SelectedPackage.Name;
+                    p.SentDate = SelectedPackage.SentDate.Date;
+                    p.FromCity = SelectedPackage.FromCity;
+                    p.ToCity = SelectedPackage.ToCity;
+                    p.Status = SelectedPackage.Status;
+                    p.Price = SelectedPackage.Price;
+                    p.DaysRemaining = SelectedPackage.DaysRemaining;
+                    Model.SaveEdit(SelectedPackage.Id, p);
+                }
+            }
         }
     }
 
@@ -133,17 +169,15 @@ public partial class MainViewModel : ViewModelBase
     public void EditPackage(Package package)
     {
         SelectedPackage = package;
-        Package vmi = new Package();
-        if (SelectedPackage != null)
+        editPackage = new Package
         {
-            NewId = SelectedPackage.Id.ToString();
-            NewName = SelectedPackage.Name;
-            NewSentDate = SelectedPackage.SentDate;
-            NewFromCity = SelectedPackage.FromCity;
-            NewToCity = SelectedPackage.ToCity;
-            NewStatus = SelectedPackage.Status;
-            NewPrice = SelectedPackage.Price.ToString();
-            NewDaysRemaining = SelectedPackage.DaysRemaining.ToString();
-        }
+            Name = package.Name,
+            SentDate = package.SentDate.Date,
+            FromCity = package.FromCity,
+            ToCity = package.ToCity,
+            Status = package.Status,
+            Price = package.Price,
+            DaysRemaining = package.DaysRemaining
+        };
     }
 }
