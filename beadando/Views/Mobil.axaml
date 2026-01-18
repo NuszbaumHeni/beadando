@@ -4,7 +4,73 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="beadando.Mobil">
-	<Grid>
-        <TextBlock Text="Mobil n�zet hamarosan..." HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
-    </Grid>
+	<ScrollViewer VerticalScrollBarVisibility="Auto">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<StackPanel Grid.Row="0" Margin="5">
+				<TextBlock Text="Új csomag felvétele" FontWeight="Bold"/>
+				<TextBlock Text="Azonosító"/>
+				<TextBlock Text="{Binding NewId}"/>
+				<TextBlock Text="Név"/>
+				<TextBox Text="{Binding NewName}"/>
+				<TextBlock Text="Feladás dátuma"/>
+				<Calendar SelectedDate="{Binding NewSentDate}"/>
+				<TextBlock Text="Honnan (város)"/>
+				<TextBox Text="{Binding NewFromCity}"/>
+				<TextBlock Text="Hova (város)"/>
+				<TextBox Text="{Binding NewToCity}"/>
+				<TextBlock Text="Állapot"/>
+				<ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding NewStatus}"/>
+				<TextBlock Text="Ár"/>
+				<TextBox Text="{Binding NewPrice}"/>
+				<TextBlock Text="Hátralévő napok"/>
+				<TextBox Text="{Binding NewDaysRemaining}"/>
+				<Button Content="Csomag hozzáadása" Command="{Binding AddPackageCommand}" Margin="0,10,0,0"/>
+				<TextBlock Text="{Binding ErrorMessage}" Foreground="Red"/>
+			</StackPanel>
+
+			<StackPanel Grid.Row="1" Margin="5">
+				<TextBlock Text="Csomagok" FontWeight="Bold"/>
+				<ItemsControl ItemsSource="{Binding Packages}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal" Spacing="5">
+								<TextBlock Text="{Binding Id}"/>
+								<TextBlock Text="{Binding Name}"/>
+								<TextBlock Text="{Binding Status}"/>
+								<Button Content="Szerkesztés" Command="{Binding EditPackageCommand}" CommandParameter="{Binding}"/>
+							</StackPanel>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
+
+			<StackPanel Grid.Row="2" Margin="5">
+				<TextBlock Text="Kiválasztott csomag" FontWeight="Bold"/>
+				<TextBlock Text="Azonosító"/>
+				<TextBlock Text="{Binding SelectedPackage.Id}"/>
+				<TextBlock Text="Név"/>
+				<TextBox Text="{Binding SelectedPackage.Name}"/>
+				<TextBlock Text="Feladás dátuma"/>
+				<TextBox Text="{Binding SelectedPackage.SentDate}" IsReadOnly="True"/>
+				<TextBlock Text="Honnan (város)"/>
+				<TextBox Text="{Binding SelectedPackage.FromCity}" IsReadOnly="True"/>
+				<TextBlock Text="Hova (város)"/>
+				<TextBox Text="{Binding SelectedPackage.ToCity}"/>
+				<TextBlock Text="Állapot"/>
+				<ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding SelectedPackage.Status}"/>
+				<TextBlock Text="Ár"/>
+				<TextBox Text="{Binding SelectedPackage.Price}"/>
+				<TextBlock Text="Hátralévő napok"/>
+				<TextBox Text="{Binding SelectedPackage.DaysRemaining}"/>
+				<Button Content="Módosítás mentése" Command="{Binding SaveEditCommand}" Margin="0,10,0,0"/>
+			</StackPanel>
+
+		</Grid>
+	</ScrollViewer>
 </UserControl>
